@@ -10,5 +10,5 @@ public class Adulte extends Visiteur {
 		this.carteMembre = carteMembre;
 	}
 
-	public static final int prixPaye = 15;
+	public static final int prixPaye = 30;
 }

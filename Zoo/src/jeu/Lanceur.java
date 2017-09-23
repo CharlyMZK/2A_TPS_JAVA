@@ -3,6 +3,7 @@ package jeu;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import java.util.Scanner;
 
 import animaux.Animal;
 import animaux.Enclos;
@@ -16,7 +17,6 @@ import employes.Caissier;
 import employes.Employe;
 import employes.Gerant;
 import employes.Soigneur;
-import gestionnaires.GestionnaireAnimaux;
 import gestionnaires.GestionnaireEmploye;
 import gestionnaires.GestionnaireMagasin;
 import gestionnaires.GestionnaireVisiteur;
@@ -42,6 +42,7 @@ public class Lanceur {
 		// -- ZOO
 		// --
 
+		Zoo.getInstance().setMontantBanque(300);
 		// -- Secteurs
 		Secteur secteurMontagne = new Secteur(10);
 		Secteur secteurPlaine = new Secteur(20);
@@ -102,13 +103,14 @@ public class Lanceur {
 		// -- STOCKS
 		// --
 
-		StockSouvenirs.getInstance().setNombreStatuettes(100);
+		StockSouvenirs.getInstance().setNombreStatuettes(10);
 		StockCroquettes.getInstance().setNombreCroquettes(100);
-		StockNourriture.getInstance().setNombreGlaces(100);
+		StockNourriture.getInstance().setNombreGlaces(10);
 
 	}
 
 	public static void faireVivreLeZoo() {
+
 		boolean run = true;
 		Thread t = new Thread() {
 			public void run() {
@@ -123,7 +125,7 @@ public class Lanceur {
 						}
 						Visiteur visiteur = null;
 						if (cpt % 5 == 0) {
-							visiteur = new Adulte(cpt, 67000, new Date(), new Date(),false);
+							visiteur = new Adulte(cpt, 67000, new Date(), new Date(), false);
 						} else if (cpt % 3 == 0) {
 							visiteur = new Enfant(cpt, 67000, new Date(), new Date());
 						} else {
@@ -133,6 +135,7 @@ public class Lanceur {
 						Zoo.getInstance().ajouterVisiteur(visiteur);
 						cpt++;
 						System.out.println("Le visiteur " + visiteur.getId() + " est entré dans le zoo");
+						GestionnaireVisiteur.acheterTicker(visiteur);
 
 					}
 
@@ -148,20 +151,17 @@ public class Lanceur {
 			public void run() {
 				while (run == true) {
 					try {
-						Thread.sleep(4000);
+						Thread.sleep(3000);
 					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					if (!Zoo.getInstance().getVisiteurs().isEmpty()) {
 						for (Visiteur visiteur : Zoo.getInstance().getVisiteurs()) {
-							int valeur = 0;
-							if (Zoo.getInstance().getVisiteurs().size() >= 1) {
-								Random r = new Random();
-								valeur = r.nextInt(Zoo.getInstance().getSecteurs().size());
-							}
 
-							Secteur secteur = Zoo.getInstance().getSecteurs().get(valeur);
+							Secteur secteur = choisirSecteur();
+							while (secteur == visiteur.getSecteur()) {
+								secteur = choisirSecteur();
+							}
 							GestionnaireVisiteur.changerSecteur(secteur, visiteur);
 
 							Secteur secteurVisiteur = visiteur.getSecteur();
@@ -187,9 +187,8 @@ public class Lanceur {
 			public void run() {
 				while (run == true) {
 					try {
-						Thread.sleep(4000);
+						Thread.sleep(7000);
 					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					if (!Zoo.getInstance().getEmployes().isEmpty()) {
@@ -200,6 +199,7 @@ public class Lanceur {
 										for (Animal animal : enclos.getAnimaux()) {
 											Soigneur soigneur = (Soigneur) employe;
 											GestionnaireEmploye.nourrir(soigneur, animal);
+											GestionnaireEmploye.soigner(soigneur, animal);
 										}
 									}
 								}
@@ -211,5 +211,88 @@ public class Lanceur {
 		};
 		vieSoigneursThread.start();
 
+		Thread vieDesAgentsThread = new Thread() {
+			public void run() {
+				while (run == true) {
+					try {
+						Thread.sleep(14000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					if (!Zoo.getInstance().getEmployes().isEmpty()) {
+						for (Employe employe : Zoo.getInstance().getEmployes()) {
+							if (employe.getClass().getName().toString().equals("employes.AgentEntretien")) {
+								AgentEntretien agent = (AgentEntretien) employe;
+								for (Secteur secteur : Zoo.getInstance().getSecteurs()) {
+									for (Enclos enclos : secteur.getListeEnclos()) {
+										GestionnaireEmploye.reparer(agent, enclos);
+										GestionnaireEmploye.nettoyer(agent, enclos);
+									}
+								}
+							}
+
+						}
+					}
+				}
+			}
+		};
+		vieDesAgentsThread.start();
+
+		Thread vieDuZoo = new Thread() {
+			public void run() {
+				while (run == true) {
+					try {
+						Thread.sleep(3000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					System.out
+							.println("===============================================================================");
+					System.out.println(
+							"[ZOO] Vous avez actuellement " + Zoo.getInstance().getMontantBanque() + " simflouze");
+					System.out
+							.println("===============================================================================");
+
+					if (Zoo.getInstance().getMontantBanque() < 0) {
+						System.out.println(
+								"===============================================================================");
+						System.out.println("[GAME OVER] Vous avez actuellement " + Zoo.getInstance().getMontantBanque()
+								+ " simflouze, c'est la banqueroute ! ");
+						System.out.println(
+								"===============================================================================");
+					}
+
+					
+//					 System.out.println("Voulez vous acheter quelquechose ? O/N");
+//					  
+//					 Scanner in = new Scanner(System.in); 
+//					 int i = in.nextInt(); 
+//					 String input = in.next();
+//					  
+//					  if(input.equals("O")) {
+//					  System.out.println("1 : Voulez vous ajouter un enclos ?");
+//					  
+//					  input = System.console().readLine(); switch(input) { case "1":
+//					  System.out.println("Enclos ajouté !"); break; default: break; }
+//					 
+//					  
+//					 }
+					 
+				}
+			}
+		};
+		vieDuZoo.start();
+
+	}
+
+	public static Secteur choisirSecteur() {
+		int valeur = 0;
+		if (Zoo.getInstance().getSecteurs().size() >= 1) {
+			Random r = new Random();
+			valeur = r.nextInt(Zoo.getInstance().getSecteurs().size());
+		}
+
+		Secteur secteur = Zoo.getInstance().getSecteurs().get(valeur);
+		return secteur;
 	}
 }

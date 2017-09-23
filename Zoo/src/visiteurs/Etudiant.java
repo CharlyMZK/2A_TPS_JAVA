@@ -10,5 +10,5 @@ public class Etudiant extends Visiteur{
 		this.carteReduction = carteReduction;
 	}
 
-	public static final int prixPaye = 10;
+	public static final int prixPaye = 20;
 }

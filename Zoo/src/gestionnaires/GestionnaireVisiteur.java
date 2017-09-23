@@ -39,10 +39,11 @@ public class GestionnaireVisiteur {
 		default:
 			break;
 		}
+		System.out.println("[GESTIONNAIRE VISITEUR] J'ai acheté mon ticket ! C'est parti ! ");
 	}
 	
 	public static void changerSecteur(Secteur secteur, Visiteur visiteur){
-		System.out.println("Le visiteur "+visiteur.getId()+" se déplace vers le secteur "+secteur.getCodeSecteur());
+		System.out.println("[GESTIONNAIRE VISITEUR] Le visiteur "+visiteur.getId()+" se déplace vers le secteur "+secteur.getCodeSecteur());
 		visiteur.setSecteur(secteur);
 	}
 	

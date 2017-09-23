@@ -20,6 +20,13 @@ public class StockSouvenirs {
 		return StockSouvenirs.instance;
 	}
 
+	public void remplirStock() {
+		System.out.println("[STOCK] Vous n'avez plus de statuettes  ! Le stock est rempli, vous avez été débité de 200 simflouze");
+		StockSouvenirs.getInstance().setNombreStatuettes(100);
+		Zoo.getInstance().setMontantBanque(Zoo.getInstance().getMontantBanque()-100);
+	}
+	
+	
 	public int getNombreStatuettes() {
 		return nombreStatuettes;
 	}

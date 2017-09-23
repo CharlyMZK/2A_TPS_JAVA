@@ -64,12 +64,19 @@ public class GestionnaireAnimaux {
 	}
 	
 	public void jouer(Animal animal) {
-		System.out.println("j'm'amuse trop lol");
+		System.out.println("[GESTIONNAIRE ANIMAUX] j'm'amuse trop lol");
 	}
 	
 	public void manger(Animal animal, int nombreCroquettes) {
-		System.out.println("Je mange c'est trop bon ! ");
+		System.out.println("[GESTIONNAIRE ANIMAUX] Je mange c'est trop bon ! ");
+		
+		
+		if( (StockCroquettes.getInstance().getNombreCroquettes()-nombreCroquettes) < 0 ) {
+			StockCroquettes.getInstance().remplirStock();
+		}
+		
 		StockCroquettes.getInstance().setNombreCroquettes(StockCroquettes.getInstance().getNombreCroquettes()-nombreCroquettes);
-		System.out.println("(Il vous reste "+StockCroquettes.getInstance().getNombreCroquettes()+" croquettes)");
+		
+		System.out.println("[STOCK] Il vous reste "+StockCroquettes.getInstance().getNombreCroquettes()+" croquettes");
 	}
 }

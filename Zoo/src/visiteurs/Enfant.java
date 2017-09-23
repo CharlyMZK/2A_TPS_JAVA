@@ -9,6 +9,6 @@ public class Enfant extends Visiteur{
 		super(id, codePostal, dateNaissance, dateVisite);
 	}
 
-	public static final int prixPaye = 5;
+	public static final int prixPaye = 10;
 	
 }
